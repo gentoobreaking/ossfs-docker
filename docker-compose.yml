@@ -1,0 +1,27 @@
+version: '3.5'
+
+services:
+  ossfs:
+    build:
+      context: ./
+    container_name: ossfs-client
+    hostname: ossfs-client
+    restart: always
+    environment:
+      aliyun_access_key: 'xxxxxx'
+      aliyun_secret_key: 'yyyyyyyyyy'
+      oss_bucket_name: 'sports-ad-hk' 
+      oss_bucket_domain: 'oss-cn-hongkong.aliyuncs.com'
+    cap_add:
+      - MKNOD
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    devices:
+      - '/dev/fuse'
+    volumes:
+      - "./ossfs:/ossfs:shared" #change ./ossfs directory to your destination directory
+      - ./oss-client.sh:/oss-client.sh
+      #- "./passwd-ossfs:/etc/passwd-ossfs"
+    command: sh -c 'chmod 755 /oss-client.sh && chown root:root /oss-client.sh && /oss-client.sh'
+
